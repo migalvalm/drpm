@@ -61,13 +61,14 @@ class MainScene
     act :tests if kd.t
     act :open if kd.o
     act :new if kd.n
+    act :settings if kd.s
     toggle_sound if kd.m
   end
 
   def move step
-    return if step.zero? || @games.empty?
+    return if step.zero?
 
-    @index = (@index + step).clamp(0, @games.size - 1)
+    @index = (@index + step).clamp(0, @games.size)   # games.size = the + NEW PROJECT button
     Blip.play audio, :move
     @mode = :details
     selected!
@@ -78,18 +79,23 @@ class MainScene
 
     hit = GameList.hit(inputs.mouse, @games.size, GameList.offset(@index, @games.size))
     return move(hit - @index) if hit
+    return open_form if inputs.mouse.inside_rect?(GameList::BUTTON)
+    return act(:settings) if inputs.mouse.inside_rect?(Chrome.settings_rect(@session))
 
     action = Details.action_at(inputs.mouse)
     act action if action
   end
 
-  # What a key, a click or a command asks for.
+  # What a key, a click or a command asks for. On the + NEW PROJECT button, Enter / P start the form.
   def act action, name = selected
+    return open_form if name.nil? && action == :play
+
     case action
     when :play then play name
     when :tests then go_tests name
     when :open then open name
     when :new then open_form
+    when :settings then go_settings
     end
   end
 
@@ -115,6 +121,11 @@ class MainScene
     @next_scene = TestsScene.new(@session, name, file)
   end
 
+  def go_settings
+    Blip.play audio, :select
+    @next_scene = SettingsScene.new(@session, selected)
+  end
+
   def open_form
     @form = NewForm.new(Templates.list)
     @mode = :form
@@ -124,6 +135,7 @@ class MainScene
 
   def toggle_sound
     Blip.muted = !Blip.muted
+    Settings.save
     Blip.play audio, :select
   end
 
@@ -178,6 +190,8 @@ class MainScene
     when :new then command_new args
     when :git then show_git args[0]
     when :help then output 'HELP', Command::HELP
+    when :settings then go_settings
+    when :theme then command_theme args[0]
     when :quit then GTK.request_quit
     when :unknown then note "unknown command: #{args[0]} · try :help"
     end
@@ -190,6 +204,14 @@ class MainScene
     return note(problem) if problem
 
     create args[0], args[1] || Projects.title_for(args[0]), Templates.list.first[:path]
+  end
+
+  def command_theme name
+    return note("themes: #{Theme::ORDER.join(', ')}") unless name && Theme::PALETTES[name.to_sym]
+
+    Theme.apply name.to_sym
+    Settings.save
+    note "theme: #{name}"
   end
 
   def show_git what

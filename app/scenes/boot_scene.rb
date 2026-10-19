@@ -34,8 +34,8 @@ class BootScene
   end
 
   def draw age
-    out = [Hud.text(80, 600, Hud.reveal('DRAGONRUBY LAUNCHER', @start, 1.5), size: 44, color: Theme::ACCENT, font: Theme::EXTRABOLD),
-           Hud.text(80, 556, 'v0.2  //  game launcher for dragonruby gtk', size: 18, color: Theme::DIM, font: Theme::LIGHT)]
+    out = [Hud.text(80, 600, Hud.reveal('DRAGONRUBY LAUNCHER', @start, 1.5), size: 44, color: Theme.accent, font: Theme::EXTRABOLD),
+           Hud.text(80, 556, 'v0.2  //  game launcher for dragonruby gtk', size: 18, color: Theme.dim, font: Theme::LIGHT)]
     @lines.each_with_index { |line, i| out.concat(boot_line(line, i, age)) if age >= i * STEP }
     out << ready(age) if age >= @lines.size * STEP
     outputs.primitives << out
@@ -46,13 +46,13 @@ class BootScene
     start = @start + index * STEP
     y = 480 - index * 40
     shown = Hud.reveal("> #{what}", start, 4)
-    out = [Hud.text(80, y, shown, size: 22, color: Theme::TEXT)]
-    out << Hud.text(96 + Hud.width("> #{'.' * 27}", 22), y, result, size: 22, color: ok ? Theme::OK : Theme::FAIL, font: Theme::BOLD) if age > index * STEP + 6
+    out = [Hud.text(80, y, shown, size: 22, color: Theme.text)]
+    out << Hud.text(96 + Hud.width("> #{'.' * 27}", 22), y, result, size: 22, color: ok ? Theme.ok : Theme.fail, font: Theme::BOLD) if age > index * STEP + 6
     out
   end
 
   def ready age
     caret = age.div(15).even? ? '█' : ''
-    Hud.text(80, 230, "> SYSTEM READY#{caret}", size: 26, color: Theme::SELECT, font: Theme::BOLD)
+    Hud.text(80, 230, "> SYSTEM READY#{caret}", size: 26, color: Theme.select, font: Theme::BOLD)
   end
 end

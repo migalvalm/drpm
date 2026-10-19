@@ -50,19 +50,19 @@ class NewForm
   end
 
   def draw x, y, since
-    out = [Hud.text(x + 28, y + 528, Hud.reveal('NEW PROJECT', since, 2), size: 40, color: Theme::SELECT, font: Theme::EXTRABOLD),
-           Hud.text(x + 28, y + 484, 'from a template into launcher/projects/', size: 17, color: Theme::DIM, font: Theme::LIGHT)]
+    out = [Hud.text(x + 28, y + 528, Hud.reveal('NEW PROJECT', since, 2), size: 40, color: Theme.select, font: Theme::EXTRABOLD),
+           Hud.text(x + 28, y + 484, 'from a template into launcher/projects/', size: 17, color: Theme.dim, font: Theme::LIGHT)]
     FIELDS.each_with_index { |label, i| out.concat(row(label, i, x, y + 400 - i * 76)) }
-    out << Hud.text(x + 28, y + 150, @problem, size: 18, color: Theme::FAIL) if @problem
-    out << Hud.text(x + 28, y + 41, 'ENTER next / create   TAB next   ←/→ template   ESC cancel', size: 16, color: Theme::DIM)
+    out << Hud.text(x + 28, y + 150, @problem, size: 18, color: Theme.fail) if @problem
+    out << Hud.text(x + 28, y + 41, 'ENTER next / create   TAB next   ←/→ template   ESC cancel', size: 16, color: Theme.dim)
   end
 
   def row label, i, x, y
     lit = i == @focus
-    out = [Hud.text(x + 28, y + 20, label, size: 18, color: lit ? Theme::ACCENT : Theme::DIM, font: Theme::BOLD)]
+    out = [Hud.text(x + 28, y + 20, label, size: 18, color: lit ? Theme.accent : Theme.dim, font: Theme::BOLD)]
     return out.concat([@folder, @title][i].draw(x + 200, y, lit)) if i < 2
 
     name = @templates[@template][:name]
-    out << Hud.text(x + 200, y + 20, lit ? "◂ #{name} ▸" : name, size: 22, color: lit ? Theme::TEXT : Theme::DIM)
+    out << Hud.text(x + 200, y + 20, lit ? "◂ #{name} ▸" : name, size: 22, color: lit ? Theme.text : Theme.dim)
   end
 end

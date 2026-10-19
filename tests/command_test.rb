@@ -24,3 +24,8 @@ end
 def test_complete_leaves_what_matches_nothing args, assert
   assert.equal! Command.complete('play zzz', GAMES), 'play zzz'
 end
+
+def test_complete_a_theme_name args, assert
+  assert.equal! Command.complete('theme am', GAMES), 'theme amber'
+  assert.equal! Command.parse('theme acid'), { name: :theme, args: ['acid'] }
+end

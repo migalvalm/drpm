@@ -17,7 +17,7 @@ module Fx
 
     top = 720 + SWEEP_H - (t * 5.5)
     (0...9).map do |i|
-      { x: 0, y: (top - i * 10).to_i, w: 1280, h: 10, path: :solid, a: (14 - (i - 4).abs * 3).clamp(2, 14) }.merge(Theme::ACCENT)
+      { x: 0, y: (top - i * 10).to_i, w: 1280, h: 10, path: :solid, a: (14 - (i - 4).abs * 3).clamp(2, 14) }.merge(Theme.accent)
     end
   end
 

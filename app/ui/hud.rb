@@ -2,7 +2,7 @@
 # go on top of text. Each helper returns primitives (a Hash or an Array of them).
 module Hud
   # A label. color: a Theme colour; ax/ay: anchors.
-  def self.text x, y, str, size: 22, color: Theme::TEXT, font: Theme::REGULAR, ax: 0, ay: 0.5, a: 255
+  def self.text x, y, str, size: 22, color: Theme.text, font: Theme::REGULAR, ax: 0, ay: 0.5, a: 255
     { x: x, y: y, text: str, size_px: size, font: font, anchor_x: ax, anchor_y: ay, a: a }.merge(color)
   end
 
@@ -21,7 +21,7 @@ module Hud
     gh = (h * grow).to_i
     fx = x + (w - gw).div(2)
     fy = y + (h - gh).div(2)
-    out = [rect(fx, fy, gw, gh, Theme::PANEL, 230)] + edges(fx, fy, gw, gh) + corners(fx, fy, gw, gh)
+    out = [rect(fx, fy, gw, gh, Theme.panel, 230)] + edges(fx, fy, gw, gh) + corners(fx, fy, gw, gh)
     out << tab(fx, fy + gh, title) if title && grow > 0.9
     out
   end
@@ -29,15 +29,15 @@ module Hud
   # Edge lines, each with a soft glow line around it.
   def self.edges x, y, w, h
     [[x, y, w, 1], [x, y + h - 1, w, 1], [x, y, 1, h], [x + w - 1, y, 1, h]].flat_map do |lx, ly, lw, lh|
-      [rect(lx - 1, ly - 1, lw + 2, lh + 2, Theme::LINES, 70), rect(lx, ly, lw, lh, Theme::LINES)]
+      [rect(lx - 1, ly - 1, lw + 2, lh + 2, Theme.lines, 70), rect(lx, ly, lw, lh, Theme.lines)]
     end
   end
 
   # Cyan L-brackets on the four corners.
   def self.corners x, y, w, h, len = 14
     [[x, y, 1, 1], [x + w, y, -1, 1], [x, y + h, 1, -1], [x + w, y + h, -1, -1]].flat_map do |cx, cy, dx, dy|
-      [rect(dx.positive? ? cx : cx - len, dy.positive? ? cy : cy - 2, len, 2, Theme::ACCENT),
-       rect(dx.positive? ? cx : cx - 2, dy.positive? ? cy : cy - len, 2, len, Theme::ACCENT)]
+      [rect(dx.positive? ? cx : cx - len, dy.positive? ? cy : cy - 2, len, 2, Theme.accent),
+       rect(dx.positive? ? cx : cx - 2, dy.positive? ? cy : cy - len, 2, len, Theme.accent)]
     end
   end
 
@@ -45,7 +45,7 @@ module Hud
   def self.tab x, top, title
     label = " #{title} "
     w = width(label, 15, Theme::BOLD)
-    [rect(x + 18, top - 8, w, 16, Theme::BG), text(x + 18, top, label, size: 15, color: Theme::ACCENT, font: Theme::BOLD)]
+    [rect(x + 18, top - 8, w, 16, Theme.bg), text(x + 18, top, label, size: 15, color: Theme.accent, font: Theme::BOLD)]
   end
 
   # The first part of str, typed in at speed chars per tick since start tick (whole string once done).
@@ -71,9 +71,9 @@ module Hud
   end
 
   # A segmented progress bar: filled segments in color, the rest dim.
-  def self.bar x, y, w, progress, color = Theme::ACCENT, segments = 24
+  def self.bar x, y, w, progress, color = Theme.accent, segments = 24
     seg = w.fdiv(segments)
     lit = (progress * segments).round
-    (0...segments).map { |i| rect((x + i * seg).to_i, y, (seg - 3).to_i, 12, i < lit ? color : Theme::LINES, i < lit ? 255 : 120) }
+    (0...segments).map { |i| rect((x + i * seg).to_i, y, (seg - 3).to_i, 12, i < lit ? color : Theme.lines, i < lit ? 255 : 120) }
   end
 end

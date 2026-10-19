@@ -43,3 +43,23 @@ end
 def test_sdk_info_ignores_the_games_own_version args, assert
   assert.equal! SdkInfo.parse("- [Engine] Game Version: 0.1\n* [Engine]   Tier: Standard\n")[:version], '?'
 end
+
+def test_settings_round_trip args, assert
+  assert.equal! Settings.parse(Settings.dump(theme: :amber, sound: false)), { theme: :amber, sound: false }
+end
+
+def test_settings_default_to_neon_with_sound args, assert
+  assert.equal! Settings.parse(''), { theme: :neon, sound: true }
+end
+
+def test_every_theme_has_every_colour args, assert
+  Theme::ORDER.each { |name| assert.equal! Theme.colors(name).keys, Theme::KEYS }
+end
+
+def test_theme_apply_and_step args, assert
+  Theme.apply :ruby
+  assert.equal! [Theme.current, Theme.accent], [:ruby, Theme.rgb('#e0344a')]
+  assert.equal! [Theme.step(1), Theme.step(-1)], %i[acid amber]
+  Theme.apply :nope
+  assert.equal! Theme.current, :neon
+end

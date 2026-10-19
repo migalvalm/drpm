@@ -1,14 +1,15 @@
 # The `:` command line: parsing and Tab completion. Plain module, no args.
 module Command
-  NAMES = %w[play test open new git help quit].freeze
+  NAMES = %w[play test open new git settings theme help quit].freeze
   GIT   = %w[status log].freeze
   HELP  = [':play <game>          start a game',
            ':test <game> [file]   run all its tests, or one file',
            ':open <game>          open its folder',
            ':new <folder> [title] new game from the template',
            ':git status | log     for the selected game',
-           ':help  :quit',
-           'keys  up/down select  p play  t tests  o open  n new  m sound  : command'].freeze
+           ':theme neon | amber | ruby | acid',
+           ':settings  :help  :quit',
+           'keys  up/down select  p play  t tests  o open  n new  s settings  m sound  : command'].freeze
 
   # { name: :play, args: [...] }; title after `new <folder>` keeps its spaces and loses its quotes.
   def self.parse line
@@ -37,6 +38,10 @@ module Command
   end
 
   def self.choices_after command, games
-    command == 'git' ? GIT : games
+    case command
+    when 'git' then GIT
+    when 'theme' then Theme::ORDER.map(&:to_s)
+    else games
+    end
   end
 end

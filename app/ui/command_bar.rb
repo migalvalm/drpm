@@ -26,9 +26,9 @@ class CommandBar
 
   def draw games
     caret = Kernel.tick_count.div(20).even? ? '█' : ' '
-    [Hud.rect(24, 20, 1232, 36, Theme::PANEL), Hud.rect(24, 55, 1232, 1, Theme::ACCENT),
-     Hud.text(36, 38, ":#{@line}#{caret}", size: 22, color: Theme::ACCENT, font: Theme::BOLD),
-     Hud.text(36 + Hud.width(":#{@line}", 22, Theme::BOLD), 38, hint(games), size: 22, color: Theme::DIM),
-     Hud.text(1244, 38, 'TAB complete · ENTER run · ESC close', size: 15, color: Theme::DIM, ax: 1)]
+    [Hud.rect(24, 20, 1232, 36, Theme.panel), Hud.rect(24, 55, 1232, 1, Theme.accent),
+     Hud.text(36, 38, ":#{@line}#{caret}", size: 22, color: Theme.accent, font: Theme::BOLD),
+     Hud.text(36 + Hud.width(":#{@line}", 22, Theme::BOLD), 38, hint(games), size: 22, color: Theme.dim),
+     Hud.text(1244, 38, 'TAB complete · ENTER run · ESC close', size: 15, color: Theme.dim, ax: 1)]
   end
 end

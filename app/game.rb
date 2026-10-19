@@ -7,7 +7,7 @@ class Game
     @session ||= Session.new
     @scene ||= BootScene.new(@session)
     @scene.args = args
-    outputs.background_color = [Theme::BG[:r], Theme::BG[:g], Theme::BG[:b]]
+    outputs.background_color = [Theme.bg[:r], Theme.bg[:g], Theme.bg[:b]]
     @session.tick audio
     @scene.tick
     @scene = @scene.next_scene || @scene

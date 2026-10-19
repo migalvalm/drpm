@@ -3,6 +3,7 @@ class Session
   attr_reader :sdk, :results, :run
 
   def initialize
+    Settings.load
     @sdk = SdkInfo.read
     @results = Results.load
   end
