@@ -9,3 +9,7 @@ end
 def test_run_returns_what_the_command_printed args, assert
   assert.equal! Shell.run('echo hi'), "hi\n"
 end
+
+def test_engine_log_reads_this_games_log args, assert
+  assert.true! Shell.engine_log('launcher').include?('logs/launcher.log')
+end

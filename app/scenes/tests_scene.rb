@@ -1,43 +1,60 @@
+# A game's tests, full screen: the files on the left (ALL TESTS first), the run on the right. A run goes on
+# in the background if you leave; the main screen shows its progress. Esc goes back.
 class TestsScene
   attr_dr
   attr_reader :next_scene
 
-  ALL = 'All tests'.freeze
-  LOG = 'tmp/test.log'.freeze
-
-  def initialize name
-    @name = name
+  # file: a test file to start at once (from `:test game file`).
+  def initialize session, name, file = nil
+    @session, @name = session, name
     @files = Projects.tests(name)
-    @buttons = List.buttons([ALL] + @files, 60, 580)
+    @entries = [TestRun::ALL] + @files
+    @index = 0
+    @opened = Kernel.tick_count
+    start file if file
   end
 
   def tick
     keys = Controls.down(inputs)
-    outputs.labels << Text.label(60, 660, "#{@name} tests", size_px: 48)
-    button = Buttons.draw(outputs, inputs.mouse, @buttons, keys)
-    return @next_scene = ProjectScene.new(@name) if keys[:escape]
+    return back if keys[:escape]
 
-    run button[:value] if button
-    draw_summary if @running
+    move((keys[:down] ? 1 : 0) - (keys[:up] ? 1 : 0))
+    click
+    start @entries[@index] if keys[:enter]
+    draw
   end
 
-  def run value
-    GTK.write_file LOG, '' 
-    Shell.run Shell.test(@name, value == ALL ? @files : [value], "#{Shell::HOME}/#{LOG}")
-    @running = value
+  def back
+    Blip.play audio, :back
+    @next_scene = MainScene.new(@session, @name)
   end
 
-  def draw_summary
-    @summary = TestLog.summary(GTK.read_file(LOG) || '') if !@summary || Kernel.tick_count % 30 == 0
+  def move step
+    return if step.zero?
 
-    x = 880
-    outputs.labels << Text.label(x, 580, @running)
-    outputs.labels << Text.label(x, 534, @summary[:done] ? 'Done' : 'Running...', Text::GREY)
-    outputs.labels << Text.label(x, 488, "#{@summary[:passed]} passed", Text::GREEN)
-    outputs.labels << Text.label(x, 442, "#{@summary[:failed]} failed", @summary[:failed].zero? ? Text::GREY : Text::RED)
+    @index = (@index + step).clamp(0, @entries.size - 1)
+    Blip.play audio, :move
+  end
 
-    @summary[:failures].first(10).each_with_index do |test, i|
-      outputs.labels << Text.label(x, 400 - 28 * i, test.delete_prefix('test_')[0, 30], Text::RED.merge(size_px: 22))
-    end
+  # A click on a file selects it; a click on the selected one runs it.
+  def click
+    return unless inputs.mouse.click
+
+    hit = GameList.hit(inputs.mouse, @entries.size, GameList.offset(@index, @entries.size))
+    return unless hit
+
+    hit == @index ? start(@entries[@index]) : move(hit - @index)
+  end
+
+  def start entry
+    files = entry == TestRun::ALL ? @files : [entry]
+    return @note = 'another run is going · wait for it to finish' unless @session.start_run(@name, entry, files)
+
+    @note = nil
+    Blip.play audio, :select
+  end
+
+  def run
+    @session.run if @session.run&.name == @name
   end
 end

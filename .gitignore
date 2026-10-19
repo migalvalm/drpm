@@ -69,4 +69,7 @@ errors/
 settings.txt
 /sdk/
 /projects/
-/templates/
+/templates/*
+!/templates/README.md
+# per-machine launcher state (last test results)
+/state/

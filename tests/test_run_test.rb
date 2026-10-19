@@ -25,5 +25,9 @@ def test_summary_is_done_after_done args, assert
 end
 
 def test_summary_of_an_empty_log_is_zero args, assert
-  assert.equal! TestLog.summary(''), { passed: 0, failed: 0, failures: [], done: false }
+  assert.equal! TestLog.summary(''), { passed: 0, failed: 0, failures: [], runs: 0, done: false }
+end
+
+def test_summary_counts_finished_runs args, assert
+  assert.equal! TestLog.summary(two_runs)[:runs], 2
 end
