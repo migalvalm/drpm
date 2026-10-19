@@ -5,8 +5,8 @@ module Chrome
 
   def self.header session, where
     out = [Hud.rect(24, 678, 1232, 1, Theme.lines), Hud.rect(24, 677, 1232, 3, Theme.lines, 60),
-           Hud.text(24, 698, '◆ DRAGONRUBY // LAUNCHER', size: 20, color: Theme.accent, font: Theme::EXTRABOLD),
-           Hud.text(40 + Hud.width('◆ DRAGONRUBY // LAUNCHER', 20, Theme::EXTRABOLD), 698, "/ #{where}", size: 20, color: Theme.dim, font: Theme::LIGHT)]
+           Hud.text(24, 698, '◆ DRAGONRUBY // DRPM', size: 20, color: Theme.accent, font: Theme::EXTRABOLD),
+           Hud.text(40 + Hud.width('◆ DRAGONRUBY // DRPM', 20, Theme::EXTRABOLD), 698, "/ #{where}", size: 20, color: Theme.dim, font: Theme::LIGHT)]
     x = RIGHT
     right_items(session).each do |text, color|
       out << Hud.text(x, 698, text, size: 17, color: color, ax: 1)

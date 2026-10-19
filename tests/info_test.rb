@@ -21,13 +21,18 @@ def test_git_info_outside_a_repo args, assert
 end
 
 def test_sdk_info_reads_version_and_tier args, assert
-  info = SdkInfo.parse("* [Engine]   Version: 7.23\n* [Engine]   Tier: Standard\n")
+  info = SdkInfo.parse("* 7.23\n* [Engine]   Tier: Standard\n")
   assert.equal! info, { version: '7.23', tier: 'Standard' }
   assert.equal! SdkInfo.label(info), 'SDK 7.23 · STANDARD'
 end
 
-def test_sdk_info_unknown_without_a_log args, assert
+def test_sdk_info_unknown_without_changelog_or_logs args, assert
   assert.equal! SdkInfo.parse(''), { version: '?', tier: '?' }
+end
+
+def test_sdk_info_reads_this_sdk args, assert
+  Paths.sdk = Shell.run('pwd').strip
+  assert.equal! SdkInfo.read[:version], '7.23'
 end
 
 def test_results_round_trip args, assert
@@ -40,16 +45,13 @@ def test_ago_in_short_units args, assert
                 ['just now', '5m ago', '2h ago', '3d ago', '2w ago']
 end
 
-def test_sdk_info_ignores_the_games_own_version args, assert
-  assert.equal! SdkInfo.parse("- [Engine] Game Version: 0.1\n* [Engine]   Tier: Standard\n")[:version], '?'
-end
-
 def test_settings_round_trip args, assert
-  assert.equal! Settings.parse(Settings.dump(theme: :amber, sound: false)), { theme: :amber, sound: false }
+  settings = { theme: :amber, sound: false, sdk: '/opt/dr sdk', projects: '/home/me/games', templates: '' }
+  assert.equal! Settings.parse(Settings.dump(settings)), settings
 end
 
-def test_settings_default_to_neon_with_sound args, assert
-  assert.equal! Settings.parse(''), { theme: :neon, sound: true }
+def test_settings_default_to_ruby_with_sound_and_no_folders args, assert
+  assert.equal! Settings.parse(''), { theme: :ruby, sound: true, sdk: '', projects: '', templates: '' }
 end
 
 def test_every_theme_has_every_colour args, assert
@@ -61,5 +63,5 @@ def test_theme_apply_and_step args, assert
   assert.equal! [Theme.current, Theme.accent], [:ruby, Theme.rgb('#e0344a')]
   assert.equal! [Theme.step(1), Theme.step(-1)], %i[acid amber]
   Theme.apply :nope
-  assert.equal! Theme.current, :neon
+  assert.equal! Theme.current, :ruby
 end

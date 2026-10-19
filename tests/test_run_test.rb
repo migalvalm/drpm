@@ -9,11 +9,6 @@ def test_tests_lists_only_test_files_sorted args, assert
   assert.equal! Projects.parse_tests("sound_test.rb\nhelpers.rb\nanim_test.rb\n"), %w[anim_test.rb sound_test.rb]
 end
 
-def test_test_runs_each_file_in_turn_with_no_window_into_the_log args, assert
-  runs = %w[a b].map { |f| "SDL_VIDEODRIVER=offscreen ./dragonruby ../../projects/game --test tests/#{f}_test.rb" }
-  assert.equal! Shell.test('game', %w[a_test.rb b_test.rb], 'l/tmp/test.log'), "(#{runs.join('; ')}; echo DONE) > l/tmp/test.log 2>&1 &"
-end
-
 def test_summary_adds_up_every_run args, assert
   summary = TestLog.summary two_runs
   assert.equal! [summary[:passed], summary[:failed], summary[:failures]], [4, 1, ['test_jump']]

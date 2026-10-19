@@ -1,5 +1,6 @@
 require 'app/helpers/color.rb'
 require 'app/controls.rb'
+require 'app/paths.rb'
 require 'app/shell.rb'
 require 'app/meta.rb'
 require 'app/sdk_info.rb'
@@ -29,6 +30,8 @@ require 'app/scenes/main_scene_draw.rb'
 require 'app/scenes/tests_scene.rb'
 require 'app/scenes/tests_scene_draw.rb'
 require 'app/scenes/settings_scene.rb'
+require 'app/scenes/setup_scene.rb'
+require 'app/scenes/setup_scene_draw.rb'
 require 'app/game.rb'
 
 module Main

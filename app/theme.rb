@@ -43,9 +43,11 @@ module Theme
     KEYS.zip(PALETTES[name][:colors].map { |hex| rgb(hex) }).to_h
   end
 
-  # Makes a palette current (an unknown name falls back to neon).
+  DEFAULT = :ruby
+
+  # Makes a palette current (an unknown name falls back to the default, ruby).
   def self.apply name
-    name = :neon unless PALETTES[name]
+    name = DEFAULT unless PALETTES[name]
     colors(name).each { |key, color| instance_variable_set("@#{key}", color) }
     @current = name
   end
@@ -55,5 +57,5 @@ module Theme
     ORDER[(ORDER.index(@current) + direction) % ORDER.size]
   end
 
-  apply :neon
+  apply DEFAULT
 end

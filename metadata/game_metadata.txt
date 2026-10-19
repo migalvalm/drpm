@@ -1,7 +1,7 @@
 devid=mizstudio
 devtitle=mizstudio
-gameid=launcher
-gametitle=Dragonruby Launcher
+gameid=drpm
+gametitle=DRPM
 version=0.1
 icon=metadata/icon.png
 # 3 = SDL3 pixel-art shader (crisp pixels when scaled); 1/2 blur. Restart the game after changing metadata.

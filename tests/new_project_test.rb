@@ -1,17 +1,18 @@
 def test_create_copies_the_template_names_the_game_and_inits_git args, assert
-  command = Shell.create('cave', 'Cave Run', '../../templates/dragonruby-template')
-  assert.true! command.include?('mkdir ../../projects/cave && tar -C ../../templates/dragonruby-template --exclude=./.git --exclude=./.github')
-  assert.true! command.include?("-e 's/^#\\? \\?gametitle=.*/gametitle=Cave Run/' ../../projects/cave/metadata/game_metadata.txt")
-  assert.true! command.end_with?('git -C ../../projects/cave init -q && echo CREATED) 2>&1')
+  Paths.projects = '/home/me/games'
+  command = Shell.create('cave', 'Cave Run', '/home/me/templates/starter')
+  assert.true! command.include?("mkdir '/home/me/games/cave' && tar -C '/home/me/templates/starter' --exclude=./.git --exclude=./.github")
+  assert.true! command.include?("-e 's/^#* *gametitle=.*/gametitle=Cave Run/' '/home/me/games/cave'/metadata/game_metadata.txt > ")
+  assert.true! command.include?("&& mv '/home/me/games/cave'/metadata/game_metadata.txt.new '/home/me/games/cave'/metadata/game_metadata.txt &&")
+  assert.true! command.end_with?("git -C '/home/me/games/cave' init -q && echo CREATED) 2>&1")
 end
 
 def test_templates_lists_yours_then_the_sdk_mygame args, assert
-  templates = Templates.parse("zeta\nalpha\nREADME.md\n")
+  templates = Templates.parse("zeta/\nalpha/\nREADME.md\n", '/t', '/sdk')
   assert.equal! templates.map { |t| t[:name] }, ['alpha', 'zeta', 'mygame (sdk)']
-  assert.equal! templates.first[:path], '../../templates/alpha'
-  assert.equal! templates.last[:path], 'mygame'
+  assert.equal! [templates.first[:path], templates.last[:path]], ['/t/alpha', '/sdk/mygame']
 end
 
 def test_templates_with_none_of_yours_still_has_mygame args, assert
-  assert.equal! Templates.parse(''), [Templates::SDK]
+  assert.equal! Templates.parse('', '', '/sdk'), [{ name: 'mygame (sdk)', path: '/sdk/mygame' }]
 end

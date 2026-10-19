@@ -217,7 +217,7 @@ class MainScene
   def show_git what
     return note('no game selected') unless selected
 
-    text = what == 'log' ? Shell.run(Shell.git_log(selected, 16)) : Shell.run("git -C #{Shell::PROJECTS}/#{selected} status --short --branch 2>&1")
+    text = what == 'log' ? Shell.run(Shell.git_log(selected, 16)) : Shell.run(Shell.git_status(selected, true))
     output "GIT #{(what || 'status').upcase} · #{selected}", text.split("\n")
   end
 

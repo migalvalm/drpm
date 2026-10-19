@@ -4,8 +4,13 @@ class Session
 
   def initialize
     Settings.load
-    @sdk = SdkInfo.read
     @results = Results.load
+    reload_sdk
+  end
+
+  # After the SDK folder changes.
+  def reload_sdk
+    @sdk = Paths.ready? ? SdkInfo.read : { version: '?', tier: '?' }
   end
 
   # Starts a run unless one is going; returns the run or nil.
