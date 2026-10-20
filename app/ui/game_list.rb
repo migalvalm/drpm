@@ -41,20 +41,28 @@ module GameList
     out
   end
 
+  # One entry: lit (selected) magenta; under the mouse, a faint bar and accent text.
   def self.row name, i, offset, lit, edits, session
     y = row_y(i, offset)
     edited = edits[name] ? Ago.since(edits[name]).delete_suffix(' ago') : ''
-    [Hud.text(X + 20, y, "#{lit ? '▸' : ' '} #{name}", size: 20, color: lit ? Theme.select : Theme.text, font: lit ? Theme::BOLD : Theme::REGULAR),
+    hover = Pointer.over?(x: X + 2, y: y - 17, w: W - 4, h: 34) && !lit
+    color = if lit then Theme.select
+            elsif hover then Theme.accent
+            else Theme.text
+            end
+    (hover ? [Hud.rect(X + 2, y - 17, W - 4, 34, Theme.accent, 22)] : []) +
+    [Hud.text(X + 20, y, "#{lit ? '▸' : ' '} #{name}", size: 20, color: color, font: lit ? Theme::BOLD : Theme::REGULAR),
      Hud.text(X + W - 44, y, edited, size: 15, color: Theme.dim, ax: 1)] + (session ? [status(name, X + W - 22, y, session)] : [])
   end
 
-  # + NEW PROJECT: outlined, filled magenta when focused.
+  # + NEW PROJECT: outlined, filled magenta when focused, brighter under the mouse.
   def self.new_button lit
     b = BUTTON
-    edge = lit ? Theme.select : Theme.accent
-    [Hud.rect(b.x, b.y, b.w, b.h, lit ? Theme.select : Theme.accent, lit ? 70 : 25),
+    hover = Pointer.over?(b)
+    edge = lit || hover ? Theme.select : Theme.accent
+    [Hud.rect(b.x, b.y, b.w, b.h, lit || hover ? Theme.select : Theme.accent, (lit ? 70 : 25) + (hover ? 40 : 0)),
      Hud.rect(b.x, b.y, b.w, 1, edge), Hud.rect(b.x, b.y + b.h - 1, b.w, 1, edge), Hud.rect(b.x, b.y, 1, b.h, edge), Hud.rect(b.x + b.w - 1, b.y, 1, b.h, edge),
-     Hud.text(b.x + b.w / 2, b.y + b.h / 2, '+ NEW PROJECT', size: 19, color: lit ? Theme.text : Theme.accent, font: Theme::BOLD, ax: 0.5),
+     Hud.text(b.x + b.w / 2, b.y + b.h / 2, '+ NEW PROJECT', size: 19, color: lit || hover ? Theme.text : Theme.accent, font: Theme::BOLD, ax: 0.5),
      Hud.text(b.x + b.w - 14, b.y + b.h / 2, 'N', size: 15, color: Theme.dim, font: Theme::BOLD, ax: 1)]
   end
 

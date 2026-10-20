@@ -8,7 +8,9 @@ module Chrome
            Hud.text(24, 698, '◆ DRAGONRUBY // DRPM', size: 20, color: Theme.accent, font: Theme::EXTRABOLD),
            Hud.text(40 + Hud.width('◆ DRAGONRUBY // DRPM', 20, Theme::EXTRABOLD), 698, "/ #{where}", size: 20, color: Theme.dim, font: Theme::LIGHT)]
     x = RIGHT
-    right_items(session).each do |text, color|
+    settings_hover = Pointer.over?(settings_rect(session))
+    right_items(session).each_with_index do |(text, color), i|
+      color = Theme.select if i == 1 && settings_hover
       out << Hud.text(x, 698, text, size: 17, color: color, ax: 1)
       x -= Hud.width(text, 17) + GAP
     end

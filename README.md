@@ -8,9 +8,10 @@ Pick a game, play it, run its tests, start a new one from a template. No termina
 ## How this happened
 
 I should have been working on my game. Instead, I got tired of going to the terminal every time I wanted to run
-or test it, and decided to use the engine to build a launcher and manager for it. Then I used Claude Code to get
-the tool running quickly, and couldn't stop adding things: a boot sequence, a command bar, live test runs, four
-themes… The game is still waiting.
+or test it, and decided to use the engine to build a launcher and manager for it. I also wanted starting a new
+project to be quick: pick a template, give it a name, and have it running in seconds, without copying folders
+around by hand. Then I used Claude Code to get the tool running quickly, and couldn't stop adding things: a boot
+sequence, a command bar, live test runs, four themes… The game is still waiting.
 
 ## What it does
 

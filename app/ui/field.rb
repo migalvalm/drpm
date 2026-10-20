@@ -18,8 +18,13 @@ class Field
   end
 
   # The box at x, y (bottom-left), brighter and with a caret when focused.
+  # Under the mouse: an I-beam pointer and a brighter edge.
   def draw x, y, focused
-    edge = focused ? Theme.accent : Theme.lines
+    hover = Pointer.over?({ x: x, y: y, w: @w, h: H }, 'ibeam')
+    edge = if focused then Theme.accent
+           elsif hover then Theme.dim
+           else Theme.lines
+           end
     caret = focused && Kernel.tick_count.div(20).even? ? '█' : ''
     shown = @text.size > SHOWN ? "…#{@text[(@text.size - SHOWN), SHOWN]}" : @text
     [Hud.rect(x, y, @w, H, Theme.bg), Hud.rect(x, y, @w, 1, edge), Hud.rect(x, y + H - 1, @w, 1, edge),

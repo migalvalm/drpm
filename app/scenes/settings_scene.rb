@@ -107,7 +107,11 @@ class SettingsScene
     r = card_rect(name)
     c = Theme.colors(name)
     lit = name == Theme.current
-    edge = lit ? c[:accent] : c[:lines]
+    hover = Pointer.over?(r) && @index.zero?
+    edge = if lit then c[:accent]
+           elsif hover then c[:select]
+           else c[:lines]
+           end
     out = [Hud.rect(r.x, r.y, r.w, r.h, c[:bg]), Hud.rect(r.x + 8, r.y + 8, r.w - 16, r.h - 16, c[:panel])]
     out.concat([[r.x, r.y, r.w, 2], [r.x, r.y + r.h - 2, r.w, 2], [r.x, r.y, 2, r.h], [r.x + r.w - 2, r.y, 2, r.h]].map { |x, y, w, h| Hud.rect(x, y, w, h, edge) })
     out << Hud.text(r.x + 24, r.y + r.h - 34, Theme::PALETTES[name][:name], size: 26, color: c[:accent], font: Theme::EXTRABOLD)
@@ -127,7 +131,8 @@ class SettingsScene
       out << Hud.text(X + 28, y, key.to_s.upcase, size: 16, color: Theme.dim, font: Theme::BOLD)
       out << Hud.text(X + 28, y - 28, path.empty? ? '— none —' : path[-60, 60] || path, size: 19, color: path.empty? ? Theme.dim : Theme.text)
     end
-    out + [Hud.rect(X + 28, Y + 160, 300, 56, Theme.accent, 40), Hud.rect(X + 28, Y + 160, 300, 1, Theme.accent),
+    hover = Pointer.over?(x: X + 28, y: Y + 160, w: 300, h: 56)
+    out + [Hud.rect(X + 28, Y + 160, 300, 56, hover ? Theme.select : Theme.accent, hover ? 90 : 40), Hud.rect(X + 28, Y + 160, 300, 1, hover ? Theme.select : Theme.accent),
            Hud.text(X + 178, Y + 188, "#{Theme::FOLDER} CHANGE · ENTER", size: 19, color: Theme.text, font: Theme::BOLD, ax: 0.5)]
   end
 
@@ -135,7 +140,7 @@ class SettingsScene
     on = !Blip.muted
     [Hud.text(X + 28, Y + 528, 'SOUND', size: 34, color: Theme.accent, font: Theme::EXTRABOLD),
      Hud.text(X + 28, Y + 484, 'blips on move and select, a chime or a low tone when tests finish', size: 17, color: Theme.dim, font: Theme::LIGHT),
-     Hud.rect(X + 28, Y + 360, 300, 90, on ? Theme.ok : Theme.lines, on ? 50 : 120),
+     Hud.rect(X + 28, Y + 360, 300, 90, on ? Theme.ok : Theme.lines, (on ? 50 : 120) + (Pointer.over?(x: X + 28, y: Y + 360, w: 300, h: 90) ? 50 : 0)),
      Hud.text(X + 178, Y + 405, on ? "#{Theme::NOTE} ON" : "#{Theme::NOTE} OFF", size: 40, color: on ? Theme.ok : Theme.dim, font: Theme::EXTRABOLD, ax: 0.5),
      Hud.text(X + 28, Y + 320, 'ENTER or ←/→ switches it · M does too, anywhere', size: 17, color: Theme.dim)]
   end

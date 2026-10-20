@@ -32,7 +32,8 @@ class SetupScene
 
   def save_button
     r = save_rect
-    lit = @focus == ROWS.size
+    hover = Pointer.over?(r)
+    lit = @focus == ROWS.size || hover
     ready = ok?
     color = ready ? Theme.ok : Theme.lines
     [Hud.rect(r.x, r.y, r.w, r.h, color, lit ? 90 : 30), Hud.rect(r.x, r.y, r.w, 1, color), Hud.rect(r.x, r.y + r.h - 1, r.w, 1, color),

@@ -63,13 +63,16 @@ module Details
               size: 17, color: Theme.text)] + Hud.bar(X + 28, Y + 102, W - 56, session.run.progress)
   end
 
-  # The key strip; returns primitives. action_at tells which one a click hit.
+  # The key strip; returns primitives. action_at tells which one a click hit. Under the mouse a key fills in.
   def self.actions
     ACTIONS.each_with_index.flat_map do |(key, label, _), i|
       x = X + 28 + i * 150
-      [Hud.rect(x, Y + 26, 30, 30, Theme.accent, 40), Hud.rect(x, Y + 26, 30, 1, Theme.accent),
-       Hud.text(x + 15, Y + 41, key, size: 18, color: Theme.accent, font: Theme::BOLD, ax: 0.5),
-       Hud.text(x + 42, Y + 41, label, size: 18, color: Theme.text, font: Theme::BOLD)]
+      hover = Pointer.over?(x: x - 6, y: Y + 20, w: 136, h: 42)
+      key_color = hover ? Theme.select : Theme.accent
+      (hover ? [Hud.rect(x - 6, Y + 20, 136, 42, Theme.select, 35)] : []) +
+        [Hud.rect(x, Y + 26, 30, 30, key_color, hover ? 110 : 40), Hud.rect(x, Y + 26, 30, 1, key_color),
+         Hud.text(x + 15, Y + 41, key, size: 18, color: hover ? Theme.text : Theme.accent, font: Theme::BOLD, ax: 0.5),
+         Hud.text(x + 42, Y + 41, label, size: 18, color: hover ? Theme.select : Theme.text, font: Theme::BOLD)]
     end
   end
 

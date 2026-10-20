@@ -37,7 +37,7 @@ class MainScene
   # A template on the card: a button that opens the form with it chosen.
   def card_template template, index
     r = card_template_rect(index)
-    hover = inputs.mouse.inside_rect?(r)
+    hover = Pointer.over?(r)
     [Hud.rect(r.x, r.y, r.w, r.h, Theme.accent, hover ? 60 : 20), Hud.rect(r.x, r.y, 3, r.h, hover ? Theme.select : Theme.accent),
      Hud.text(r.x + 16, r.y + r.h / 2, "#{Theme::FOLDER}  #{template[:name]}", size: 20, color: Theme.text, font: hover ? Theme::BOLD : Theme::REGULAR),
      Hud.text(r.x + r.w - 16, r.y + r.h / 2, '▸', size: 20, color: hover ? Theme.select : Theme.dim, ax: 1)]

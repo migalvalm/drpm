@@ -87,9 +87,14 @@ class NewForm
     @templates.each_with_index.flat_map do |t, i|
       r = template_rect(x, y, i)
       lit = i == @template
-      color = lit ? (@focus == 2 ? Theme.select : Theme.text) : Theme.dim
+      hover = Pointer.over?(r)
+      color = if lit then (@focus == 2 ? Theme.select : Theme.text)
+              elsif hover then Theme.accent
+              else Theme.dim
+              end
       out = [Hud.text(r.x + 4, r.y + r.h / 2, "#{lit ? '●' : '○'} #{t[:name]}", size: 20, color: color, font: lit ? Theme::BOLD : Theme::REGULAR)]
       out.unshift(Hud.rect(r.x, r.y, r.w, r.h, Theme.select, 40)) if lit && @focus == 2
+      out.unshift(Hud.rect(r.x, r.y, r.w, r.h, Theme.accent, 22)) if hover && !(lit && @focus == 2)
       out
     end
   end
