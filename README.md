@@ -39,9 +39,22 @@ themes… The game is still waiting.
   `sh` commands.
 - `git`, plus the usual command-line tools: `tar`, `sed`, `find`, `stat`, and `xdg-open` (Linux) or `open` (macOS).
 
-## Setup
+## Download (Linux)
 
-You can run DRPM from source with your SDK, or use a build.
+The quickest way: no cloning, no copying into the SDK.
+
+1. Download `drpm-linux-amd64.zip` from the [latest release](https://github.com/migalvalm/drpm/releases/latest).
+2. Unzip it anywhere and run `drpm-linux-amd64.bin` (double-click it, or `./drpm-linux-amd64.bin` in a terminal).
+3. On first start, [Setup](#first-run) asks where your DragonRuby SDK and your games are. That's it.
+
+You still need your own DragonRuby SDK: DRPM uses it to run and test your games. The build keeps its settings in
+`~/.local/share/DRPM`.
+
+On macOS, there's no download: run DRPM from source, or [build it on your Mac](#macos).
+
+## Setup from source
+
+For macOS, for working on DRPM, or if you'd rather not use a build.
 
 ### Run from source
 
@@ -114,8 +127,9 @@ The mouse works too: click a game, an action, + NEW PROJECT, or ⚙ SETTINGS in 
 A test run keeps going if you leave the tests screen. The main screen shows its progress, and a chime (or a low
 tone) tells you when it's done.
 
-## Build
+## Build it yourself
 
+You only need this to make your own build (the Linux one is on the [releases page](https://github.com/migalvalm/drpm/releases)).
 DragonRuby's `dragonruby-publish` packages DRPM like any game. It only packages a game that is a real folder
 **inside** the SDK folder (not a path elsewhere, and not a link), so copy DRPM in first:
 
