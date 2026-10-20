@@ -54,10 +54,11 @@ class NewForm
     @problem = message
   end
 
-  # A click: on a field row focuses it (leaving FOLDER checks it), on a template picks it and focuses TEMPLATE.
+  # A click: on a template picks it (any time, the fields stay as they are); on a field row focuses it
+  # (leaving FOLDER for TITLE checks the name first).
   def click mouse, x, y
     hit = (0...@templates.size).find { |i| mouse.inside_rect?(template_rect(x, y, i)) }
-    return (@template = hit) && (@focus = 2) if hit && (@focus.positive? || folder_ok?)
+    return @template = hit if hit
 
     row = (0..1).find { |i| mouse.inside_rect?(x: x + 20, y: field_y(y, i) - 6, w: 760, h: 52) }
     @focus = row if row && (row.zero? || folder_ok?)
