@@ -1,4 +1,4 @@
-# DRPM — DragonRuby Project Manager
+# <img src="metadata/icon.png" alt="DRPM logo" width="64" height="64" align="center"> DRPM — DragonRuby Project Manager
 
 A launcher and project manager for [DragonRuby Game Toolkit](https://dragonruby.org), built in DragonRuby itself.
 Pick a game, play it, run its tests, start a new one from a template. No terminal, no links inside the SDK.
