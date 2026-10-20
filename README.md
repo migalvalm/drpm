@@ -80,7 +80,7 @@ DRPM asks where your things are:
 |---|---|
 | **SDK folder** | The unzipped `dragonruby-<platform>` folder, with `./dragonruby` in it. |
 | **Projects folder** | Where your games are: one folder per game, each with `app/main.rb`. It can be the SDK folder itself, if that's where you keep your games (its own `mygame/` is hidden). |
-| **Templates folder** | Optional. Each folder in it is a starting point for New project. The SDK's own `mygame/` is always offered too. |
+| **Templates folder** | Optional. Each folder in it is a starting point for New project; the SDK's own `mygame/` is always offered too. See [Templates](#templates). |
 
 Fields are checked as you go, Tab completes folder names, and SAVE takes you to your projects.
 You can change them later in **Settings → FOLDERS**.
@@ -92,7 +92,7 @@ A layout that works well:
   sdk/dragonruby-linux-amd64/
   drpm/
   projects/   my-game/  other-game/
-  templates/  my-template/
+  templates/  dragonruby-template/
 ```
 
 ### App menu entry (Linux, optional)
@@ -127,6 +127,32 @@ The mouse works too: click a game, an action, + NEW PROJECT, or ⚙ SETTINGS in 
 
 A test run keeps going if you leave the tests screen. The main screen shows its progress, and a chime (or a low
 tone) tells you when it's done.
+
+## Templates
+
+**New project** copies a template into your projects folder, then makes it yours: it sets `gameid` and `gametitle`
+in `metadata/game_metadata.txt`, leaves out the template's `.git` and `.github`, and runs `git init`. The new game
+is ready to play straight away.
+
+- **No templates folder?** DRPM offers the SDK's own `mygame/` (DragonRuby's hello world), so New project always works.
+- **Your own templates:** make a folder for them (e.g. `~/DragonRuby/templates`), put each template in it as a
+  folder with `app/main.rb` and `metadata/game_metadata.txt`, and choose that folder in Setup or
+  **Settings → FOLDERS**. Every folder in it shows up in New project.
+
+### Mine, if you'd like a head start
+
+[**dragonruby-template**](https://github.com/migalvalm/dragonruby-template) is the starter I use: a scene loop
+(splash → menu → game with pause), settings (volume, window, fullscreen; saved), keyboard + gamepad input, sound
+helpers, JSON data loading, a RuboCop config tuned for mruby, and tests. To use it with DRPM, clone it into your
+templates folder:
+
+```sh
+cd ~/DragonRuby/templates
+git clone https://github.com/migalvalm/dragonruby-template.git
+```
+
+It then appears in New project. Its README's "Start a new game" steps are the manual way of doing what New project
+does for you.
 
 ## Build it yourself
 
