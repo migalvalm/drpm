@@ -26,7 +26,7 @@ class BootScene
     templates = Templates.list.size
     [['sdk', "#{sdk[:version]} #{sdk[:tier].downcase}", sdk[:version] != '?'],
      ['projects', "#{Projects.scan.first.size} found", true],
-     ['templates', "#{templates} found (#{templates - 1} yours + sdk mygame)", true]]
+     ['templates', "#{templates - 1} found (+ blank game)", true]]
   end
 
   def tick

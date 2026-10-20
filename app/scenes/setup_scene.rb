@@ -7,7 +7,7 @@ class SetupScene
 
   ROWS = [[:sdk, 'SDK FOLDER', 'the unzipped dragonruby-<platform> folder, with ./dragonruby in it'],
           [:projects, 'PROJECTS FOLDER', 'where your games are: one folder per game, each with app/main.rb'],
-          [:templates, 'TEMPLATES FOLDER', "optional: folders New project can copy (the SDK's mygame is always there)"]].freeze
+          [:templates, 'TEMPLATES FOLDER', "optional: folders New project can copy (a blank game is always there too)"]].freeze
   FIELD_W = 900
   SETTLE = 10   # ticks after the last keystroke before a field is checked again
 

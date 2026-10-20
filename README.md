@@ -80,7 +80,7 @@ DRPM asks where your things are:
 |---|---|
 | **SDK folder** | The unzipped `dragonruby-<platform>` folder, with `./dragonruby` in it. |
 | **Projects folder** | Where your games are: one folder per game, each with `app/main.rb`. It can be the SDK folder itself, if that's where you keep your games (its own `mygame/` is hidden). |
-| **Templates folder** | Optional. Each folder in it is a starting point for New project; the SDK's own `mygame/` is always offered too. See [Templates](#templates). |
+| **Templates folder** | Optional. Each folder in it is a starting point for New project; **none · blank game** is always offered too. See [Templates](#templates). |
 
 Fields are checked as you go, Tab completes folder names, and SAVE takes you to your projects.
 You can change them later in **Settings → FOLDERS**.
@@ -134,7 +134,8 @@ tone) tells you when it's done.
 in `metadata/game_metadata.txt`, leaves out the template's `.git` and `.github`, and runs `git init`. The new game
 is ready to play straight away.
 
-- **No templates folder?** DRPM offers the SDK's own `mygame/` (DragonRuby's hello world), so New project always works.
+- **Don't want a template?** Pick **none · blank game**, always the last choice. It starts from the SDK's own
+  `mygame/` (DragonRuby's hello world), the smallest game that runs, so New project works even with no templates.
 - **Your own templates:** make a folder for them (e.g. `~/DragonRuby/templates`), put each template in it as a
   folder with `app/main.rb` and `metadata/game_metadata.txt`, and choose that folder in Setup or
   **Settings → FOLDERS**. Every folder in it shows up in New project.
