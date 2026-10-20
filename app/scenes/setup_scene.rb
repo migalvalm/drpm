@@ -7,7 +7,7 @@ class SetupScene
 
   ROWS = [[:sdk, 'SDK FOLDER', 'the unzipped dragonruby-<platform> folder, with ./dragonruby in it'],
           [:projects, 'PROJECTS FOLDER', 'where your games are: one folder per game, each with app/main.rb'],
-          [:templates, 'TEMPLATES FOLDER', "optional: folders New project can copy (a blank game is always there too)"]].freeze
+          [:templates, 'TEMPLATES FOLDER', "optional: your templates for New project, one folder each (\"none · blank game\" is always offered too)"]].freeze
   FIELD_W = 900
   SETTLE = 10   # ticks after the last keystroke before a field is checked again
 
@@ -51,7 +51,8 @@ class SetupScene
     return "#{Theme::CHECK} dragonruby found" if key == :sdk
 
     count = Shell.run("ls -d #{Paths.q path}/*/#{key == :projects ? 'app/main.rb' : ''} 2>/dev/null").split("\n").size
-    "#{Theme::CHECK} #{count} #{key == :projects ? 'games' : 'templates'}"
+    noun = key == :projects ? 'game' : 'template'
+    "#{Theme::CHECK} #{count} #{noun}#{count == 1 ? '' : 's'}"
   end
 
   def ok?
