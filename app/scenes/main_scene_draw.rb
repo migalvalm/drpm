@@ -28,10 +28,23 @@ class MainScene
 
     x = Details::X + 28
     out << Hud.text(x, Details::Y + 528, Hud.reveal('NEW PROJECT', @since, 2), size: 40, color: Theme.select, font: Theme::EXTRABOLD)
-    out << Hud.text(x, Details::Y + 484, 'ENTER or click to start · a copy of a template in launcher/projects/', size: 17, color: Theme.dim, font: Theme::LIGHT)
-    out << Hud.text(x, Details::Y + 420, 'TEMPLATES', size: 18, color: Theme.accent, font: Theme::BOLD)
-    templates.each_with_index { |t, i| out << Hud.text(x, Details::Y + 380 - i * 32, "#{Theme::FOLDER} #{t[:name]}", size: 20, color: Theme.text) }
-    out
+    out << Hud.text(x, Details::Y + 484, 'a copy of a template, in your projects folder', size: 17, color: Theme.dim, font: Theme::LIGHT)
+    out << Hud.text(x, Details::Y + 420, 'START FROM', size: 18, color: Theme.accent, font: Theme::BOLD)
+    templates.each_with_index { |t, i| out.concat(card_template(t, i)) }
+    out << Hud.text(x, Details::Y + 41, 'click a template, or ENTER to start with the first', size: 16, color: Theme.dim)
+  end
+
+  # A template on the card: a button that opens the form with it chosen.
+  def card_template template, index
+    r = card_template_rect(index)
+    hover = inputs.mouse.inside_rect?(r)
+    [Hud.rect(r.x, r.y, r.w, r.h, Theme.accent, hover ? 60 : 20), Hud.rect(r.x, r.y, 3, r.h, hover ? Theme.select : Theme.accent),
+     Hud.text(r.x + 16, r.y + r.h / 2, "#{Theme::FOLDER}  #{template[:name]}", size: 20, color: Theme.text, font: hover ? Theme::BOLD : Theme::REGULAR),
+     Hud.text(r.x + r.w - 16, r.y + r.h / 2, '▸', size: 20, color: hover ? Theme.select : Theme.dim, ax: 1)]
+  end
+
+  def card_template_rect index
+    { x: Details::X + 28, y: Details::Y + 352 - index * 52, w: 480, h: 42 }
   end
 
   def templates

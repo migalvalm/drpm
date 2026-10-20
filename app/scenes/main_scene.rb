@@ -80,6 +80,9 @@ class MainScene
     hit = GameList.hit(inputs.mouse, @games.size, GameList.offset(@index, @games.size))
     return move(hit - @index) if hit
     return open_form if inputs.mouse.inside_rect?(GameList::BUTTON)
+
+    card = selected ? nil : (0...templates.size).find { |i| inputs.mouse.inside_rect?(card_template_rect(i)) }
+    return open_form(card) if card
     return act(:settings) if inputs.mouse.inside_rect?(Chrome.settings_rect(@session))
 
     action = Details.action_at(inputs.mouse)
@@ -126,8 +129,9 @@ class MainScene
     @next_scene = SettingsScene.new(@session, selected)
   end
 
-  def open_form
-    @form = NewForm.new(Templates.list)
+  # template: which one the form starts on (a template clicked on the + NEW PROJECT card).
+  def open_form template = 0
+    @form = NewForm.new(Templates.list, template)
     @mode = :form
     @since = Kernel.tick_count
     Blip.play audio, :select
@@ -144,6 +148,7 @@ class MainScene
   end
 
   def form_input
+    @form.click(inputs.mouse, Details::X, Details::Y) if inputs.mouse.click
     result = @form.update(Clipboard.typed(inputs), inputs.keyboard.key_down)
     return close_form if result == :cancel
 

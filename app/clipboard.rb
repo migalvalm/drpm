@@ -1,10 +1,10 @@
 # Ctrl+V (Cmd+V on macOS) for the text inputs: the clipboard's first line, trimmed, read through SDL the same way
 # DragonRuby's own console pastes ($gtk.ffi_misc.getclipboard; not in the docs, but the console relies on it).
 module Clipboard
-  # The pasted text this tick, or nil.
+  # The pasted text this tick, or nil. ctrl_v / meta_v: V pressed this tick while Ctrl / Cmd is down *or held*
+  # (Ctrl is usually held from an earlier tick, so key_down.control alone misses it).
   def self.pasted keyboard
-    kd = keyboard.key_down
-    return nil unless kd.v && (kd.control || kd.meta)
+    return nil unless keyboard.ctrl_v || keyboard.meta_v
 
     first_line GTK.ffi_misc.getclipboard.to_s
   end

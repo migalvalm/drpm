@@ -70,3 +70,25 @@ def test_clipboard_keeps_the_first_line_trimmed args, assert
   assert.equal! Clipboard.first_line("  /home/me/dr sdk/  \nsecond line\n"), '/home/me/dr sdk/'
   assert.equal! Clipboard.first_line(''), ''
 end
+
+V_KEY = 118          # SDL keycode for v
+CTRL_MOD = 64        # SDL left-Ctrl modifier bit
+
+# Ctrl held from an earlier tick, then V pressed: the engine's own key event, as SDL sends it.
+def test_clipboard_pastes_on_v_with_ctrl_held args, assert
+  keyboard = $gtk.args.inputs.keyboard   # the keyboard GTK.key_down_raw updates
+  GTK.ffi_misc.setclipboard "/home/me/dr sdk\nsecond line"
+  keyboard.key_held.set [:control], Kernel.tick_count
+  GTK.key_down_raw V_KEY, CTRL_MOD
+  assert.false! keyboard.key_down.control   # why key_down.control alone never worked
+  assert.equal! Clipboard.pasted(keyboard), '/home/me/dr sdk'
+  keyboard.key_held.clear
+  keyboard.key_down.clear
+end
+
+def test_clipboard_ignores_v_alone args, assert
+  keyboard = $gtk.args.inputs.keyboard   # the keyboard GTK.key_down_raw updates
+  GTK.key_down_raw V_KEY, 0
+  assert.nil! Clipboard.pasted(keyboard)
+  keyboard.key_down.clear
+end

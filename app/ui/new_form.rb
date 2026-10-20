@@ -1,17 +1,20 @@
-# New project in the right pane: folder name, title (suggested from the folder), template (←/→ to pick).
-# Enter goes to the next field and creates on the last one; Esc cancels. Plain class, no args.
+# New project in the right pane: folder name, title (suggested from the folder), and the template, listed in full.
+# Enter / Tab / ↓ go to the next field (checking the folder name), ↑ goes back, Enter on TEMPLATE creates.
+# ←/→ or a click picks the template; a click on a field focuses it. Esc cancels. Plain class, no args.
 class NewForm
   NAME_CHARS  = 'abcdefghijklmnopqrstuvwxyz0123456789_-'.freeze
   TITLE_CHARS = "#{NAME_CHARS}ABCDEFGHIJKLMNOPQRSTUVWXYZ ".freeze
   FIELDS = %w[FOLDER TITLE TEMPLATE].freeze
+  ITEM = 32   # template list row height
 
   attr_reader :problem
 
-  def initialize templates
+  # template: which one starts selected (from the + NEW PROJECT card).
+  def initialize templates, template = 0
     @templates = templates
     @folder = Field.new('', 24, NAME_CHARS)
     @title = Field.new('', 32, TITLE_CHARS)
-    @template = 0
+    @template = template.clamp(0, templates.size - 1)
     @focus = 0
   end
 
@@ -20,49 +23,74 @@ class NewForm
     return :cancel if keys.escape
 
     [@folder, @title][@focus]&.update(chars, keys)
-    pick keys if @focus == 2
-    return unless keys.enter || keys.kp_enter || keys.tab
+    pick((keys.right ? 1 : 0) - (keys.left ? 1 : 0)) if @focus == 2
+    @focus -= 1 if keys.up && @focus.positive?
+    return unless keys.enter || keys.kp_enter || keys.tab || (keys.down && @focus < 2)
 
     advance
   end
 
-  def pick keys
-    step = (keys.right ? 1 : 0) - (keys.left ? 1 : 0)
+  def pick step
     @template = (@template + step) % @templates.size
   end
 
   # Next field, checking the folder name first; on the last field, the result to create.
   def advance
-    if @focus.zero?
-      @problem = Projects.problem(@folder.text, Projects.taken)
-      return if @problem
-
-      @title.text = Projects.title_for(@folder.text) if @title.text.empty?
-    end
+    return unless folder_ok? || @focus.positive?
     return [:create, @folder.text, @title.text, @templates[@template][:path]] if @focus == 2
 
     @focus += 1
     nil
   end
 
+  # Checks the folder name (and suggests a title from it); false, with the problem shown, if it can't be used.
+  def folder_ok?
+    @problem = Projects.problem(@folder.text, Projects.taken)
+    @title.text = Projects.title_for(@folder.text) if !@problem && @title.text.empty?
+    @problem.nil?
+  end
+
   def fail message
     @problem = message
   end
 
-  def draw x, y, since
-    out = [Hud.text(x + 28, y + 528, Hud.reveal('NEW PROJECT', since, 2), size: 40, color: Theme.select, font: Theme::EXTRABOLD),
-           Hud.text(x + 28, y + 484, 'from a template into launcher/projects/', size: 17, color: Theme.dim, font: Theme::LIGHT)]
-    FIELDS.each_with_index { |label, i| out.concat(row(label, i, x, y + 400 - i * 76)) }
-    out << Hud.text(x + 28, y + 150, @problem, size: 18, color: Theme.fail) if @problem
-    out << Hud.text(x + 28, y + 41, 'ENTER next / create   TAB next   ←/→ template   ESC cancel', size: 16, color: Theme.dim)
+  # A click: on a field row focuses it (leaving FOLDER checks it), on a template picks it and focuses TEMPLATE.
+  def click mouse, x, y
+    hit = (0...@templates.size).find { |i| mouse.inside_rect?(template_rect(x, y, i)) }
+    return (@template = hit) && (@focus = 2) if hit && (@focus.positive? || folder_ok?)
+
+    row = (0..1).find { |i| mouse.inside_rect?(x: x + 20, y: field_y(y, i) - 6, w: 760, h: 52) }
+    @focus = row if row && (row.zero? || folder_ok?)
   end
 
-  def row label, i, x, y
-    lit = i == @focus
-    out = [Hud.text(x + 28, y + 20, label, size: 18, color: lit ? Theme.accent : Theme.dim, font: Theme::BOLD)]
-    return out.concat([@folder, @title][i].draw(x + 200, y, lit)) if i < 2
+  def field_y y, index
+    y + 400 - index * 76
+  end
 
-    name = @templates[@template][:name]
-    out << Hud.text(x + 200, y + 20, lit ? "◂ #{name} ▸" : name, size: 22, color: lit ? Theme.text : Theme.dim)
+  def template_rect x, y, index
+    { x: x + 196, y: field_y(y, 2) + 6 - index * ITEM, w: 560, h: ITEM - 4 }
+  end
+
+  def draw x, y, since
+    out = [Hud.text(x + 28, y + 528, Hud.reveal('NEW PROJECT', since, 2), size: 40, color: Theme.select, font: Theme::EXTRABOLD),
+           Hud.text(x + 28, y + 484, 'a copy of a template, in your projects folder', size: 17, color: Theme.dim, font: Theme::LIGHT)]
+    FIELDS.each_with_index { |label, i| out << Hud.text(x + 28, field_y(y, i) + 20, label, size: 18, color: i == @focus ? Theme.accent : Theme.dim, font: Theme::BOLD) }
+    out.concat(@folder.draw(x + 200, field_y(y, 0), @focus.zero?))
+    out.concat(@title.draw(x + 200, field_y(y, 1), @focus == 1))
+    out.concat(templates(x, y))
+    out << Hud.text(x + 28, y + 96, @problem, size: 18, color: Theme.fail) if @problem
+    out << Hud.text(x + 28, y + 41, 'ENTER next / create   ↑↓ fields   ←/→ or click a template   ESC cancel', size: 16, color: Theme.dim)
+  end
+
+  # Every template, the chosen one filled (●) and lit; brighter while TEMPLATE has the focus.
+  def templates x, y
+    @templates.each_with_index.flat_map do |t, i|
+      r = template_rect(x, y, i)
+      lit = i == @template
+      color = lit ? (@focus == 2 ? Theme.select : Theme.text) : Theme.dim
+      out = [Hud.text(r.x + 4, r.y + r.h / 2, "#{lit ? '●' : '○'} #{t[:name]}", size: 20, color: color, font: lit ? Theme::BOLD : Theme::REGULAR)]
+      out.unshift(Hud.rect(r.x, r.y, r.w, r.h, Theme.select, 40)) if lit && @focus == 2
+      out
+    end
   end
 end
