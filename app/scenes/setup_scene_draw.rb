@@ -16,7 +16,7 @@ class SetupScene
   end
 
   def hints
-    keys = [['↑↓', 'field'], ['TAB', 'complete'], ['ENTER', 'check + next']]
+    keys = [['↑↓', 'field'], ['TAB', 'complete'], ['CTRL+V', 'paste'], ['ENTER', 'check + next']]
     @editing ? keys + [['ESC', 'cancel']] : keys
   end
 

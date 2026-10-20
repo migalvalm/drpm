@@ -1,5 +1,5 @@
-# Setup: where the SDK, the projects and the templates are. Each field is checked as you go (Enter) and Tab
-# completes folder names like a shell. SAVE keeps them (Settings) and opens the main screen. Shown on first run,
+# Setup: where the SDK, the projects and the templates are. Each field is checked as you type (a moment after you
+# stop, and when you leave it), Tab completes folder names like a shell, Ctrl+V pastes. SAVE keeps them (Settings) and opens the main screen. Shown on first run,
 # and from Settings > FOLDERS (where Esc cancels).
 class SetupScene
   attr_dr
@@ -9,12 +9,14 @@ class SetupScene
           [:projects, 'PROJECTS FOLDER', 'where your games are: one folder per game, each with app/main.rb'],
           [:templates, 'TEMPLATES FOLDER', "optional: folders New project can copy (the SDK's mygame is always there)"]].freeze
   FIELD_W = 900
+  SETTLE = 10   # ticks after the last keystroke before a field is checked again
 
   def initialize session, editing = false
     @session, @editing = session, editing
     @home = Shell.home
     @fields = ROWS.map { |key, _, _| [key, Field.new(start_value(key), 240, nil, FIELD_W)] }.to_h
     @checks = {}
+    @changed_at = {}   # key => tick of its last unchecked change
     @focus = 0
     @opened = Kernel.tick_count
     ROWS.each { |key, _, _| check key }
@@ -62,16 +64,29 @@ class SetupScene
 
     @focus < ROWS.size ? field_keys(kd) : save_keys(kd)
     mouse
+    settle
     draw
   end
 
   def field_keys kd
     key = key_at(@focus)
     field = @fields[key]
-    field.update(inputs.text, kd)
+    before = field.text
+    field.update(Clipboard.typed(inputs), kd)
     field.text = Paths.complete(Paths.expand(field.text, @home), Paths.listing(Paths.expand(field.text, @home))) if kd.tab
+    @changed_at[key] = Kernel.tick_count if field.text != before
     move(-1) if kd.up
     enter key if kd.enter || kd.kp_enter || kd.down
+  end
+
+  # Re-checks a changed field once typing pauses, so the marks and SAVE follow what is in the fields.
+  def settle
+    @changed_at.select { |_key, at| Kernel.tick_count - at >= SETTLE }.each_key { |key| recheck key }
+  end
+
+  def recheck key
+    @changed_at.delete key
+    check key
   end
 
   def enter key
@@ -86,7 +101,9 @@ class SetupScene
     save if kd.enter || kd.kp_enter
   end
 
+  # Leaving a field checks it at once.
   def move step
+    recheck key_at(@focus) if @focus < ROWS.size && @changed_at[key_at(@focus)]
     @focus = (@focus + step).clamp(0, ROWS.size)
     Blip.play audio, :move
   end
@@ -95,7 +112,7 @@ class SetupScene
     return unless inputs.mouse.click
 
     row = (0...ROWS.size).find { |i| inputs.mouse.inside_rect?(x: 48, y: row_y(i) - 50, w: 1180, h: 90) }
-    @focus = row if row
+    move(row - @focus) if row && row != @focus
     save if inputs.mouse.inside_rect?(save_rect)
   end
 

@@ -65,3 +65,8 @@ def test_theme_apply_and_step args, assert
   Theme.apply :nope
   assert.equal! Theme.current, :ruby
 end
+
+def test_clipboard_keeps_the_first_line_trimmed args, assert
+  assert.equal! Clipboard.first_line("  /home/me/dr sdk/  \nsecond line\n"), '/home/me/dr sdk/'
+  assert.equal! Clipboard.first_line(''), ''
+end

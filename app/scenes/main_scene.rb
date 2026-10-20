@@ -144,7 +144,7 @@ class MainScene
   end
 
   def form_input
-    result = @form.update(inputs.text, inputs.keyboard.key_down)
+    result = @form.update(Clipboard.typed(inputs), inputs.keyboard.key_down)
     return close_form if result == :cancel
 
     create(*result.drop(1)) if result.is_a?(Array)
@@ -171,7 +171,7 @@ class MainScene
   end
 
   def bar_input
-    result = @bar.update(inputs.text, inputs.keyboard.key_down, @games)
+    result = @bar.update(Clipboard.typed(inputs), inputs.keyboard.key_down, @games)
     return unless result
 
     @bar = nil
