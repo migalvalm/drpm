@@ -43,10 +43,15 @@ class BootScene
 
   def draw age
     out = [Hud.text(80, 600, Hud.reveal('DRPM', @start, 0.5), size: 64, color: Theme.accent, font: Theme::EXTRABOLD),
-           Hud.text(80, 548, 'dragonruby project manager  //  v0.3', size: 18, color: Theme.dim, font: Theme::LIGHT)]
+           Hud.text(80, 548, "dragonruby project manager  //  v#{version}", size: 18, color: Theme.dim, font: Theme::LIGHT)]
     @lines.each_with_index { |line, i| out.concat(boot_line(line, i, age)) if age >= i * STEP }
     out << ready(age) if age >= @lines.size * STEP
     outputs.primitives << out
+  end
+
+  # DRPM's own version, from its metadata (the one place it is set; builds are named after it too).
+  def version
+    @version ||= Meta.parse(GTK.read_file('metadata/game_metadata.txt') || '')[:version] || '?'
   end
 
   def boot_line line, index, age
