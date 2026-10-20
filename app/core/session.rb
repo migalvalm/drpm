@@ -13,7 +13,6 @@ class Session
     @sdk = Paths.ready? ? SdkInfo.read : { version: '?', tier: '?' }
   end
 
-  # Starts a run unless one is going; returns the run or nil.
   def start_run name, label, files
     return nil if running?
 
@@ -22,6 +21,10 @@ class Session
 
   def running?
     @run && !@run.done?
+  end
+
+  def running_for? name
+    running? && @run.name == name
   end
 
   # Every half second while a run goes: re-read its log; when it ends, keep the result and say so.

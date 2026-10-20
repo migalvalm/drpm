@@ -36,8 +36,9 @@ def test_sdk_info_reads_this_sdk args, assert
 end
 
 def test_results_round_trip args, assert
-  results = { 'project-1bit' => { passed: 53, failed: 33, at: 1_792_449_000 }, 'cave' => { passed: 4, failed: 0, at: 1_792_440_000 } }
+  results = { 'project-1bit' => { passed: 53, failed: 33, at: 1_792_449_000 }, 'my cave' => { passed: 4, failed: 0, at: 1_792_440_000 } }
   assert.equal! Results.parse(Results.dump(results)), results
+  assert.equal! Results.parse("short line\n"), {}
 end
 
 def test_ago_in_short_units args, assert

@@ -1,19 +1,13 @@
 # New project in the right pane: folder name, title (suggested from the folder), and the template, listed in full.
-# Enter / Tab / ↓ go to the next field (checking the folder name), ↑ goes back, Enter on TEMPLATE creates.
-# ←/→ or a click picks the template; a click on a field focuses it. Esc cancels. Plain class, no args.
 class NewForm
-  NAME_CHARS  = 'abcdefghijklmnopqrstuvwxyz0123456789_-'.freeze
-  TITLE_CHARS = "#{NAME_CHARS}ABCDEFGHIJKLMNOPQRSTUVWXYZ ".freeze
   FIELDS = %w[FOLDER TITLE TEMPLATE].freeze
   ITEM = 32   # template list row height
-
-  attr_reader :problem
 
   # template: which one starts selected (from the + NEW PROJECT card).
   def initialize templates, template = 0
     @templates = templates
-    @folder = Field.new('', 24, NAME_CHARS)
-    @title = Field.new('', 32, TITLE_CHARS)
+    @folder = Field.new('', 24, Projects::NAME_CHARS)
+    @title = Field.new('', 32, Projects::TITLE_CHARS)
     @template = template.clamp(0, templates.size - 1)
     @focus = 0
   end
@@ -72,9 +66,14 @@ class NewForm
     { x: x + 196, y: field_y(y, 2) + 6 - index * ITEM, w: 560, h: ITEM - 4 }
   end
 
+  # Also heads the + NEW PROJECT card.
+  def self.heading x, y, since
+    [Hud.text(x + 28, y + 528, Hud.reveal('NEW PROJECT', since, 2), size: 40, color: Theme.select, font: Theme::EXTRABOLD),
+     Hud.text(x + 28, y + 484, 'a copy of a template, in your projects folder', size: 17, color: Theme.dim, font: Theme::LIGHT)]
+  end
+
   def draw x, y, since
-    out = [Hud.text(x + 28, y + 528, Hud.reveal('NEW PROJECT', since, 2), size: 40, color: Theme.select, font: Theme::EXTRABOLD),
-           Hud.text(x + 28, y + 484, 'a copy of a template, in your projects folder', size: 17, color: Theme.dim, font: Theme::LIGHT)]
+    out = NewForm.heading(x, y, since)
     FIELDS.each_with_index { |label, i| out << Hud.text(x + 28, field_y(y, i) + 20, label, size: 18, color: i == @focus ? Theme.accent : Theme.dim, font: Theme::BOLD) }
     out.concat(@folder.draw(x + 200, field_y(y, 0), @focus.zero?))
     out.concat(@title.draw(x + 200, field_y(y, 1), @focus == 1))

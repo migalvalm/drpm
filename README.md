@@ -198,11 +198,9 @@ and `test_run_test.rb`. Scenes aren't unit tested. `rubocop` (config in `.ruboco
 
 | Where | What |
 |---|---|
-| `app/shell.rb` | Every shell command DRPM runs, built from the configured folders |
-| `app/paths.rb`, `app/settings.rb` | The three folders, theme and sound, saved in `state/settings.txt` |
-| `app/projects.rb`, `meta.rb`, `git_info.rb`, `sdk_info.rb` | What DRPM reads about your games and SDK |
-| `app/test_run.rb`, `test_log.rb`, `results.rb` | Background test runs and their results |
-| `app/theme.rb`, `app/ui/` | Palettes, fonts, HUD drawing and effects |
+| `app/system/` | What touches the machine: every shell command (`shell.rb`), the folders, theme and sound saved in `state/settings.txt`, test results, keys, clipboard, sounds |
+| `app/core/` | What DRPM reads about your games and SDK, the `:` commands, and background test runs |
+| `app/ui/` | Palettes and fonts (`theme.rb`), HUD drawing and effects |
 | `app/scenes/` | Boot, setup, main, tests, settings |
 | `tools/make_blips.py` | Generates the UI sounds in `sounds/` |
 

@@ -34,6 +34,11 @@ def test_problem_with_an_empty_or_taken_name args, assert
   assert.equal! Projects.problem('', []), 'folder name is empty'
   assert.equal! Projects.problem('project-1bit', %w[project-1bit]), 'project-1bit already exists'
   assert.nil! Projects.problem('cave', %w[project-1bit])
+  assert.equal! Projects.problem('../cave', []), 'folder name: only a-z, 0-9, _ and -'
+end
+
+def test_clean_title_keeps_only_safe_characters args, assert
+  assert.equal! Projects.clean_title("Bob's Game/2 & more"), 'Bobs Game2  more'
 end
 
 def test_title_for_a_folder_name args, assert

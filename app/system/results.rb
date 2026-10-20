@@ -4,8 +4,8 @@ module Results
 
   def self.parse text
     text.split("\n").each_with_object({}) do |line, results|
-      name, passed, failed, at = line.split(' ')
-      results[name] = { passed: passed.to_i, failed: failed.to_i, at: at.to_i } if at
+      *words, passed, failed, at = line.split(' ')   # a name may have spaces
+      results[words.join(' ')] = { passed: passed.to_i, failed: failed.to_i, at: at.to_i } unless words.empty?
     end
   end
 

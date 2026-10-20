@@ -18,7 +18,7 @@ class TestsScene
     keys = Controls.down(inputs)
     return back if keys[:escape]
 
-    move((keys[:down] ? 1 : 0) - (keys[:up] ? 1 : 0))
+    move(Controls.step(keys))
     click
     start @entries[@index] if keys[:enter]
     draw

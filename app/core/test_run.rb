@@ -24,7 +24,6 @@ class TestRun
     @summary[:done]
   end
 
-  # 0.0 .. 1.0 by finished files.
   def progress
     return 1.0 if done?
 

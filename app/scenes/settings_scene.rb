@@ -5,10 +5,7 @@ class SettingsScene
   attr_reader :next_scene
 
   SECTIONS = %w[THEME SOUND FOLDERS].freeze
-  X = 452
-  Y = 72
-  W = 804
-  H = 584
+  X, Y, W, H = Details::X, Details::Y, Details::W, Details::H
   CARD_W = 360
   CARD_H = 200
 
@@ -22,7 +19,7 @@ class SettingsScene
     keys = Controls.down(inputs)
     return back if keys[:escape]
 
-    move((keys[:down] ? 1 : 0) - (keys[:up] ? 1 : 0))
+    move(Controls.step(keys))
     change((keys[:right] ? 1 : 0) - (keys[:left] ? 1 : 0)) if keys[:left] || keys[:right]
     change(1) if keys[:enter] && @index == 1
     folders if keys[:enter] && @index == 2
@@ -113,7 +110,7 @@ class SettingsScene
            else c[:lines]
            end
     out = [Hud.rect(r.x, r.y, r.w, r.h, c[:bg]), Hud.rect(r.x + 8, r.y + 8, r.w - 16, r.h - 16, c[:panel])]
-    out.concat([[r.x, r.y, r.w, 2], [r.x, r.y + r.h - 2, r.w, 2], [r.x, r.y, 2, r.h], [r.x + r.w - 2, r.y, 2, r.h]].map { |x, y, w, h| Hud.rect(x, y, w, h, edge) })
+    out.concat(Hud.outline(r.x, r.y, r.w, r.h, edge, 2))
     out << Hud.text(r.x + 24, r.y + r.h - 34, Theme::PALETTES[name][:name], size: 26, color: c[:accent], font: Theme::EXTRABOLD)
     out << Hud.text(r.x + r.w - 24, r.y + r.h - 34, lit ? "#{Theme::CHECK} IN USE" : '', size: 15, color: c[:ok], font: Theme::BOLD, ax: 1)
     out << Hud.text(r.x + 24, r.y + r.h - 64, Theme::PALETTES[name][:about], size: 16, color: c[:dim], font: Theme::LIGHT)

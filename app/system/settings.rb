@@ -15,7 +15,6 @@ module Settings
     (lines + ["theme=#{settings[:theme]}", "sound=#{settings[:sound] ? 'on' : 'off'}"]).join("\n") + "\n"
   end
 
-  # Reads the file and applies it: folders, palette, sound.
   def self.load
     settings = parse(GTK.read_file(FILE) || '')
     FOLDERS.each { |key| Paths.send("#{key}=", settings[key]) }
@@ -23,7 +22,6 @@ module Settings
     Blip.muted = !settings[:sound]
   end
 
-  # Writes what is in use now.
   def self.save
     GTK.write_file FILE, dump({ theme: Theme.current, sound: !Blip.muted, sdk: Paths.sdk, projects: Paths.projects, templates: Paths.templates })
   end

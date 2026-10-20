@@ -6,7 +6,6 @@ module Theme
   BOLD      = 'fonts/JetBrainsMonoNerdFontMono-Bold.ttf'.freeze
   EXTRABOLD = 'fonts/JetBrainsMonoNerdFontMono-ExtraBold.ttf'.freeze
 
-  # Nerd Font icons
   BRANCH = "\u{e0a0}".freeze
   CHECK  = "\u{f00c}".freeze
   CROSS  = "\u{f00d}".freeze
@@ -34,25 +33,23 @@ module Theme
   end
 
   def self.rgb hex
-    r, g, b = Color.hex(hex)
+    r, g, b = [1, 3, 5].map { |i| hex[i, 2].to_i(16) }
     { r: r, g: g, b: b }.freeze
   end
 
-  # A palette's colours by key, e.g. colors(:amber)[:accent].
   def self.colors name
     KEYS.zip(PALETTES[name][:colors].map { |hex| rgb(hex) }).to_h
   end
 
   DEFAULT = :ruby
 
-  # Makes a palette current (an unknown name falls back to the default, ruby).
+  # An unknown name falls back to the default.
   def self.apply name
     name = DEFAULT unless PALETTES[name]
     colors(name).each { |key, color| instance_variable_set("@#{key}", color) }
     @current = name
   end
 
-  # The palette before (-1) or after (1) the current one.
   def self.step direction
     ORDER[(ORDER.index(@current) + direction) % ORDER.size]
   end

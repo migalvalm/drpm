@@ -1,5 +1,4 @@
-# A one-line text input drawn in HUD style. Plain class: the scene feeds it the characters typed this tick
-# (inputs.text) and the keyboard's key_down; text input stays on for the whole launcher.
+# A one-line text input drawn in HUD style. The scene feeds it the characters typed this tick and key_down.
 class Field
   attr_accessor :text
 
@@ -17,8 +16,6 @@ class Field
     @text = @text[0...-1] if keys.backspace
   end
 
-  # The box at x, y (bottom-left), brighter and with a caret when focused.
-  # Under the mouse: an I-beam pointer and a brighter edge.
   def draw x, y, focused
     hover = Pointer.over?({ x: x, y: y, w: @w, h: H }, 'ibeam')
     edge = if focused then Theme.accent
@@ -27,8 +24,7 @@ class Field
            end
     caret = focused && Kernel.tick_count.div(20).even? ? '█' : ''
     shown = @text.size > SHOWN ? "…#{@text[(@text.size - SHOWN), SHOWN]}" : @text
-    [Hud.rect(x, y, @w, H, Theme.bg), Hud.rect(x, y, @w, 1, edge), Hud.rect(x, y + H - 1, @w, 1, edge),
-     Hud.rect(x, y, 1, H, edge), Hud.rect(x + @w - 1, y, 1, H, edge),
+    [Hud.rect(x, y, @w, H, Theme.bg), *Hud.outline(x, y, @w, H, edge),
      Hud.text(x + 12, y + H / 2, shown + caret, size: 20, color: focused ? Theme.text : Theme.dim)]
   end
 end

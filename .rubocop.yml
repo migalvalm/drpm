@@ -38,7 +38,7 @@ Metrics/ClassLength:
   Max: 250
 Metrics/ModuleLength:
   Max: 110
-# Game maths (x, y, w, h, dx, dz...) come in long lists; keyword args (Sound.play's variants:) don't count.
+# Drawing helpers take x, y, w, h, color... in a row; keyword args don't count.
 Metrics/ParameterLists:
   Max: 8
   CountKeywordArgs: false
@@ -71,7 +71,7 @@ Lint/AmbiguousOperatorPrecedence:
 # Compact DragonRuby style.
 Layout/EmptyLineAfterGuardClause:
   Enabled: false
-# `update` may return a flag; `open!`-style methods memoize.
+# `update` may return a flag; `selected!`-style methods remember state.
 Naming/PredicateMethod:
   Enabled: false
 Naming/MemoizedInstanceVariableName:
@@ -81,10 +81,4 @@ Style/RedundantFileExtensionInRequire:
   Enabled: false
 # mruby's Hash#to_h ignores a block, so keep `map { }.to_h`.
 Style/MapToHash:
-  Enabled: false
-# Symbols are data names (:blood_1, json keys), not variables.
-Naming/VariableNumber:
-  CheckSymbols: false
-# mruby's Kernel#rand takes no Range ("can't convert Range to Integer"), so keep `1 + rand(5)`.
-Style/RandomWithOffset:
   Enabled: false

@@ -10,7 +10,6 @@ module Fx
     outputs.primitives << vignette
   end
 
-  # A soft band of light that runs down the screen every SWEEP_EVERY ticks.
   def self.sweep
     t = Kernel.tick_count % SWEEP_EVERY
     return [] if t > 160
@@ -21,7 +20,6 @@ module Fx
     end
   end
 
-  # Darker bands along the top and bottom edges, like a curved screen.
   def self.vignette
     (0...6).flat_map do |i|
       a = 60 - i * 10

@@ -1,4 +1,4 @@
-# The left pane: games newest-edited first, the selection a magenta bar that slides between rows,
+# The left pane: games newest-edited first, the selection a bar that slides between rows,
 # and per game how long since its last edit and its last test result (a dot).
 module GameList
   X = 24
@@ -19,7 +19,6 @@ module GameList
     TOP - (i - offset) * ROW
   end
 
-  # Which game a mouse point is on, or nil.
   def self.hit mouse, count, offset
     return nil unless mouse.x.between?(X, X + W)
 
@@ -41,7 +40,6 @@ module GameList
     out
   end
 
-  # One entry: lit (selected) magenta; under the mouse, a faint bar and accent text.
   def self.row name, i, offset, lit, edits, session
     y = row_y(i, offset)
     edited = edits[name] ? Ago.since(edits[name]).delete_suffix(' ago') : ''
@@ -55,20 +53,19 @@ module GameList
      Hud.text(X + W - 44, y, edited, size: 15, color: Theme.dim, ax: 1)] + (session ? [status(name, X + W - 22, y, session)] : [])
   end
 
-  # + NEW PROJECT: outlined, filled magenta when focused, brighter under the mouse.
   def self.new_button lit
     b = BUTTON
     hover = Pointer.over?(b)
     edge = lit || hover ? Theme.select : Theme.accent
     [Hud.rect(b.x, b.y, b.w, b.h, lit || hover ? Theme.select : Theme.accent, (lit ? 70 : 25) + (hover ? 40 : 0)),
-     Hud.rect(b.x, b.y, b.w, 1, edge), Hud.rect(b.x, b.y + b.h - 1, b.w, 1, edge), Hud.rect(b.x, b.y, 1, b.h, edge), Hud.rect(b.x + b.w - 1, b.y, 1, b.h, edge),
+     *Hud.outline(b.x, b.y, b.w, b.h, edge),
      Hud.text(b.x + b.w / 2, b.y + b.h / 2, '+ NEW PROJECT', size: 19, color: lit || hover ? Theme.text : Theme.accent, font: Theme::BOLD, ax: 0.5),
      Hud.text(b.x + b.w - 14, b.y + b.h / 2, 'N', size: 15, color: Theme.dim, font: Theme::BOLD, ax: 1)]
   end
 
-  # ● green/red for the last result, a pulsing cyan ● while its tests run, ○ when never run.
+  # ● in ok/fail colour for the last result, pulsing while its tests run, ○ when never run.
   def self.status name, x, y, session
-    return Hud.text(x, y, '●', size: 16, color: Theme.accent, ax: 0.5, a: Hud.pulse) if session.running? && session.run.name == name
+    return Hud.text(x, y, '●', size: 16, color: Theme.accent, ax: 0.5, a: Hud.pulse) if session.running_for?(name)
 
     result = session.results[name]
     return Hud.text(x, y, '○', size: 16, color: Theme.dim, ax: 0.5) unless result

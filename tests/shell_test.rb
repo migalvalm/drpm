@@ -18,7 +18,7 @@ end
 def test_test_runs_each_file_hidden_into_the_sdk_log args, assert
   with_paths
   command = Shell.test('cave', %w[a_test.rb b_test.rb])
-  assert.true! command.include?("SDL_VIDEODRIVER=offscreen ./dragonruby '/home/me/games/cave' --test tests/a_test.rb; ")
+  assert.true! command.include?("SDL_VIDEODRIVER=offscreen ./dragonruby '/home/me/games/cave' --test 'tests/a_test.rb'; ")
   assert.true! command.include?('echo DONE) > tmp/launcher-tests.log 2>&1')
   assert.true! command.start_with?("(cd '/home/me/dr sdk/dragonruby-linux-amd64' && mkdir -p tmp")
 end

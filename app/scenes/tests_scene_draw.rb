@@ -1,9 +1,6 @@
 # TestsScene's drawing: the file list, then the run (or the last result) with totals, a bar and failures.
 class TestsScene
-  X = 452
-  Y = 72
-  W = 804
-  H = 584
+  X, Y, W, H = Details::X, Details::Y, Details::W, Details::H
 
   def draw
     grow = Hud.ease(@opened, 24)

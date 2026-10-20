@@ -1,10 +1,14 @@
 # The games: every folder in the projects folder (Paths.projects) with an app/main.rb, newest edit first.
 # When that folder is the SDK itself, its own mygame/ isn't listed.
 module Projects
+  # What a new game's folder and title may hold: also safe inside Shell.create's sh and sed.
+  NAME_CHARS  = 'abcdefghijklmnopqrstuvwxyz0123456789_-'.freeze
+  TITLE_CHARS = "#{NAME_CHARS}ABCDEFGHIJKLMNOPQRSTUVWXYZ ".freeze
+
   # Game names from `ls -d <projects>/*/app/main.rb` (one path per line).
-  def self.parse listing, projects = Paths.projects
+  def self.parse listing, projects = Paths.projects, sdk = Paths.sdk
     names = listing.split("\n").map { |path| name_in path, projects }.sort
-    projects == Paths.sdk ? names - [Shell::MYGAME] : names
+    projects == sdk ? names - [Shell::MYGAME] : names
   end
 
   # { name => newest change time } from Shell.edits output.
@@ -43,8 +47,14 @@ module Projects
   # Why a new folder can't take this name (taken = the names already in the projects folder), or nil.
   def self.problem name, taken
     return 'folder name is empty' if name.empty?
+    return 'folder name: only a-z, 0-9, _ and -' unless name.each_char.all? { |c| NAME_CHARS.include?(c) }
 
     "#{name} already exists" if taken.include?(name)
+  end
+
+  # A typed title with only TITLE_CHARS kept.
+  def self.clean_title title
+    title.each_char.select { |c| TITLE_CHARS.include?(c) }.join.strip
   end
 
   def self.taken

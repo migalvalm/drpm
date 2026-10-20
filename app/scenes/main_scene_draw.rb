@@ -27,8 +27,7 @@ class MainScene
     return out if grow < 0.9
 
     x = Details::X + 28
-    out << Hud.text(x, Details::Y + 528, Hud.reveal('NEW PROJECT', @since, 2), size: 40, color: Theme.select, font: Theme::EXTRABOLD)
-    out << Hud.text(x, Details::Y + 484, 'a copy of a template, in your projects folder', size: 17, color: Theme.dim, font: Theme::LIGHT)
+    out.concat(NewForm.heading(Details::X, Details::Y, @since))
     out << Hud.text(x, Details::Y + 420, 'START FROM', size: 18, color: Theme.accent, font: Theme::BOLD)
     templates.each_with_index { |t, i| out.concat(card_template(t, i)) }
     out << Hud.text(x, Details::Y + 41, 'click a template, or ENTER to start with the first', size: 16, color: Theme.dim)

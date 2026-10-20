@@ -9,4 +9,9 @@ module Controls
     pad = inputs.controller_one.key_down
     PAD.map { |key, buttons| [key, !!(kb.send(key) || buttons.any? { |b| pad.send(b) })] }.to_h
   end
+
+  # 1 for down, -1 for up, from a down result.
+  def self.step keys
+    (keys[:down] ? 1 : 0) - (keys[:up] ? 1 : 0)
+  end
 end

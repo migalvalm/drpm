@@ -17,8 +17,7 @@ module Paths
     path.size > 1 ? path.chomp('/') : path
   end
 
-  # Why a folder can't be the SDK / the projects / the templates, or nil. checks: what the shell answered for it
-  # ('dir', 'sdk' when it also holds an executable dragonruby, or '' when missing).
+  # Why a folder can't be the SDK / the projects / the templates, or nil. check: what Paths.check said about it.
   def self.problem kind, path, check
     return 'type a folder (Tab completes)' if path.empty? && kind != :templates
     return nil if path.empty?
@@ -28,9 +27,8 @@ module Paths
     nil
   end
 
-  # What the shell says about a path, for problem.
   def self.check path
-    Shell.run("if [ -x #{q "#{path}/dragonruby"} ]; then echo sdk; elif [ -d #{q path} ]; then echo dir; fi").strip
+    Shell.run(Shell.check(path)).strip
   end
 
   def self.ready?
@@ -46,8 +44,7 @@ module Paths
     common.size > text.size ? common : text
   end
 
-  # The folders starting with prefix (sh glob), one per line, folders ending in /.
   def self.listing prefix
-    Shell.run("ls -1dp -- #{q prefix}* 2>/dev/null")
+    Shell.run Shell.listing(prefix)
   end
 end

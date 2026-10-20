@@ -15,7 +15,7 @@ module Details
     out << Hud.text(X + 28, Y + H - 56, Hud.reveal(name.upcase, since, 3), size: 40, color: Theme.accent, font: Theme::EXTRABOLD)
     out << Hud.text(X + 48 + Hud.width(name.upcase, 40, Theme::EXTRABOLD), Y + H - 56, '/' * 12, size: 26, color: Theme.lines, font: Theme::LIGHT)
     readouts(name, info, session).each_with_index { |line, i| out.concat(readout(line, i, since)) }
-    out.concat(running(session)) if session.running? && session.run.name == name
+    out.concat(running(session)) if session.running_for?(name)
     out.concat(actions)
   end
 
@@ -40,7 +40,7 @@ module Details
   end
 
   def self.tests name, session
-    return ['TESTS', "running · #{session.run.summary[:runs]}/#{session.run.files.size} files", Theme.accent] if session.running? && session.run.name == name
+    return ['TESTS', "running · #{session.run.summary[:runs]}/#{session.run.files.size} files", Theme.accent] if session.running_for?(name)
 
     r = session.results[name]
     return ['TESTS', 'never run · press T', Theme.dim] unless r

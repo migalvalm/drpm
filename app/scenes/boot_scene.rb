@@ -16,7 +16,7 @@ class BootScene
 
   # [what, result, ok?] per line.
   def checks
-    git = Shell.run('git --version 2>/dev/null').include?('git version')
+    git = Shell.git?
     folders = @ready ? found : [['sdk', 'not set · setup is next', false]]
     folders + [['git', git ? 'OK' : 'missing', git], ['sound', Blip.muted ? 'off' : 'on', true]]
   end

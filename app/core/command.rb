@@ -1,4 +1,4 @@
-# The `:` command line: parsing and Tab completion. Plain module, no args.
+# The `:` command line: parsing and Tab completion.
 module Command
   NAMES = %w[play test open new git settings theme help quit].freeze
   GIT   = %w[status log].freeze

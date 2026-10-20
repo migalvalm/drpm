@@ -35,7 +35,6 @@ class MainScene
     draw
   end
 
-  # Keys go to whichever is open: the command bar, the form, the output, or the list.
   def input
     return bar_input if @bar
     return form_input if @mode == :form
@@ -54,7 +53,7 @@ class MainScene
 
   def list_keys
     kd = inputs.keyboard.key_down
-    move((keys[:down] ? 1 : 0) - (keys[:up] ? 1 : 0))
+    move(Controls.step(keys))
     return open_bar if inputs.text.include?(':')
 
     act :play if kd.p || keys[:enter]
@@ -103,7 +102,7 @@ class MainScene
   end
 
   def play name
-    return note("no game called #{name}") unless @games.include?(name)
+    return if missing(name)
 
     Shell.run Shell.play(name)
     Blip.play audio, :select
@@ -111,17 +110,24 @@ class MainScene
   end
 
   def open name
-    return note("no game called #{name}") unless @games.include?(name)
+    return if missing(name)
 
     Shell.run Shell.open(name)
     note "#{Theme::FOLDER} opened #{name}/"
   end
 
   def go_tests name, file = nil
-    return note("no game called #{name}") unless @games.include?(name)
+    return if missing(name)
 
     Blip.play audio, :select
     @next_scene = TestsScene.new(@session, name, file)
+  end
+
+  # Notes why name is no game here; nil when it is one.
+  def missing name
+    return if @games.include?(name)
+
+    note(name ? "no game called #{name}" : 'no game selected')
   end
 
   def go_settings
@@ -163,7 +169,10 @@ class MainScene
 
   def create folder, title, template
     out = Shell.run Shell.create(folder, title, template)
-    return @form&.fail(out.split("\n").first) unless out.include?('CREATED')
+    unless out.include?('CREATED')
+      error = out.split("\n").first
+      return @mode == :form ? @form.fail(error) : note(error)
+    end
 
     @next_scene = MainScene.new(@session, folder)
     @next_scene.note "#{Theme::CHECK} created #{folder} from #{template.split('/').last}"
@@ -185,7 +194,6 @@ class MainScene
     run_command result[1]
   end
 
-  # Runs a `:` command line.
   def run_command line
     command = Command.parse(line)
     args = command[:args]
@@ -208,7 +216,8 @@ class MainScene
     problem = Projects.problem(args[0], Projects.taken)
     return note(problem) if problem
 
-    create args[0], args[1] || Projects.title_for(args[0]), Templates.list.first[:path]
+    title = Projects.clean_title(args[1].to_s)
+    create args[0], title.empty? ? Projects.title_for(args[0]) : title, Templates.list.first[:path]
   end
 
   def command_theme name

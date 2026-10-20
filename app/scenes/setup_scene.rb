@@ -1,6 +1,5 @@
-# Setup: where the SDK, the projects and the templates are. Each field is checked as you type (a moment after you
-# stop, and when you leave it), Tab completes folder names like a shell, Ctrl+V pastes. SAVE keeps them (Settings) and opens the main screen. Shown on first run,
-# and from Settings > FOLDERS (where Esc cancels).
+# Setup: where the SDK, the projects and the templates are. Shown on first run, and from Settings > FOLDERS
+# (where Esc cancels). Each field is checked a moment after typing stops, and when you leave it.
 class SetupScene
   attr_dr
   attr_reader :next_scene
@@ -28,7 +27,7 @@ class SetupScene
     current = Paths.send(key).to_s
     return current unless current.empty?
 
-    pwd = Shell.run('pwd').strip
+    pwd = Shell.pwd
     return (Paths.check(pwd) == 'sdk' ? pwd : '') if key == :sdk
 
     guess = "#{pwd.split('/')[0...-2].join('/')}/#{key}"
@@ -50,7 +49,11 @@ class SetupScene
     return '' if path.empty? || state.empty?
     return "#{Theme::CHECK} dragonruby found" if key == :sdk
 
-    count = Shell.run("ls -d #{Paths.q path}/*/#{key == :projects ? 'app/main.rb' : ''} 2>/dev/null").split("\n").size
+    count = if key == :projects
+              Projects.parse(Shell.run(Shell.games(path)), path, Paths.expand(@fields[:sdk].text, @home)).size
+            else
+              Templates.parse(Shell.run(Shell.folders(path)), path).size - 1   # not the blank game
+            end
     noun = key == :projects ? 'game' : 'template'
     "#{Theme::CHECK} #{count} #{noun}#{count == 1 ? '' : 's'}"
   end

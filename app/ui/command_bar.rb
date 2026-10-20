@@ -1,5 +1,5 @@
 # The `:` command line along the bottom: type, Tab completes (commands, then game names), Enter runs,
-# Esc (or Backspace on an empty line) closes. Plain class.
+# Esc (or Backspace on an empty line) closes.
 class CommandBar
   attr_reader :line
 

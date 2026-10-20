@@ -24,7 +24,6 @@ module Chrome
      [Blip.muted ? "#{Theme::NOTE} OFF" : "#{Theme::NOTE} ON", Theme.text], [SdkInfo.label(session.sdk), Theme.text]]
   end
 
-  # Where the header's settings item is, for clicks.
   def self.settings_rect session
     clock, settings = right_items(session).first(2).map(&:first)
     right = RIGHT - Hud.width(clock, 17) - GAP
